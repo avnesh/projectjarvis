@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import * as authService from '../../services/authService';
+import { getAuthToken } from '../../services/api';
 import LoadingSpinner from '../Common/LoadingSpinner';
 
 const AdminDashboard = () => {
@@ -25,7 +26,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('/api/admin/monitor', {
         headers: {
-          'Authorization': `Bearer ${authService.getToken()}`
+          'Authorization': `Bearer ${getAuthToken()}`
         }
       });
       
