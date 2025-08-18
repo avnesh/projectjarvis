@@ -148,12 +148,34 @@
   box-shadow: 0 8px 32px var(--shadow-overlay);
   min-width: 240px;
   max-width: 300px;
+  max-height: 400px; /* Prevent dropdown from being too tall */
   z-index: 1010; /* Higher than sidebar to prevent overlap */
   backdrop-filter: blur(20px);
   animation: slideInDown 0.2s ease;
-  overflow: hidden;
+  overflow-y: auto; /* Allow scrolling if content is too long */
+  overflow-x: hidden;
   /* Ensure it doesn't go off screen */
   margin-right: var(--spacing-md);
+  /* Ensure dropdown stays within viewport */
+  bottom: auto;
+}
+
+/* Dropdown positioning for when it appears above the button */
+.dropdown-menu.dropdown-top {
+  top: auto;
+  bottom: calc(100% + var(--spacing-sm));
+  animation: slideInUp 0.2s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInDown {
@@ -249,11 +271,17 @@
 
 .dropdown-item.logout {
   color: var(--status-error);
+  font-weight: 600;
+  /* Ensure logout is always visible */
+  border: 1px solid transparent;
+  margin-top: var(--spacing-xs);
 }
 
 .dropdown-item.logout:hover {
   background: rgba(239, 68, 68, 0.1);
   color: var(--status-error);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: translateX(4px);
 }
 
 .dropdown-item svg {

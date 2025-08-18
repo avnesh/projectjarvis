@@ -8,6 +8,7 @@ const Header = ({ onToggleSidebar, isSidebarOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState('bottom');
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const Header = ({ onToggleSidebar, isSidebarOpen }) => {
   }, []);
 
   const handleLogout = () => {
+    console.log('🚪 Logout button clicked');
     logout();
     setShowDropdown(false);
   };
@@ -36,6 +38,22 @@ const Header = ({ onToggleSidebar, isSidebarOpen }) => {
   const handleSettingsClick = () => {
     setShowDropdown(false);
     navigate('/settings');
+  };
+
+  const handleDropdownToggle = () => {
+    if (!showDropdown) {
+      // Calculate if dropdown should appear above or below
+      const buttonRect = dropdownRef.current?.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = 300; // Approximate dropdown height
+      
+      if (buttonRect && buttonRect.bottom + dropdownHeight > viewportHeight) {
+        setDropdownPosition('top');
+      } else {
+        setDropdownPosition('bottom');
+      }
+    }
+    setShowDropdown(!showDropdown);
   };
 
   // Generate user initials from username or full name
@@ -99,7 +117,7 @@ const Header = ({ onToggleSidebar, isSidebarOpen }) => {
         <div className="user-profile" ref={dropdownRef}>
           <button 
             className="avatar-button"
-            onClick={() => setShowDropdown(!showDropdown)}
+            onClick={handleDropdownToggle}
             aria-label="User profile"
             aria-expanded={showDropdown}
             aria-haspopup="true"
@@ -118,7 +136,7 @@ const Header = ({ onToggleSidebar, isSidebarOpen }) => {
           </button>
           
           {showDropdown && (
-            <div className="dropdown-menu">
+            <div className={`dropdown-menu ${dropdownPosition === 'top' ? 'dropdown-top' : ''}`}>
               <div className="dropdown-header">
                 <div className="username">
                   {user?.username || 'User'}
