@@ -1,0 +1,45 @@
+/* ===== Chat Page Styles ===== */
+.chat-page {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Main content styles inherited from sidebar-layout.css */
+
+.chat-area {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0; /* Prevent flex item from overflowing */
+}
+
+/* Welcome message centering */
+.chat-area .welcome-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: var(--spacing-2xl);
+}
+
+/* Welcome message styles - sidebar margin handled by Tailwind */
+
+/* Footer removed for cleaner interface */
+
+/* Main content only accounts for header */
+.main-content {
+  height: calc(100vh - 64px); /* Subtract only header height */
+}
+
+/* Responsive styles inherited from sidebar-layout.css */
+
+@media (max-width: 480px) {
+  /* No footer styles needed */
+}

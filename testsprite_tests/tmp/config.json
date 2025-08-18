@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5000",
+  "backendAuthType": "public",
+  "executionArgs": {
+    "projectName": "open_ai_codex",
+    "projectPath": "C:\\Users\\openspace\\Desktop\\open_ai_codex",
+    "testIds": [],
+    "additionalInstruction": "Run comprehensive tests on all features including authentication, AI chat functionality, admin dashboard, user management, and API endpoints. Test both frontend and backend components thoroughly.",
+    "envs": {
+      "API_KEY": ""
+    }
+  }
+}

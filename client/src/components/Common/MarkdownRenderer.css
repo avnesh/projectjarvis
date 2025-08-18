@@ -1,0 +1,212 @@
+/* Markdown Content Styling */
+.markdown-content {
+  line-height: 1.6;
+  color: inherit;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Paragraphs */
+.markdown-paragraph {
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.6;
+}
+
+.markdown-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* Text formatting */
+.markdown-bold {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.markdown-italic {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+/* Code */
+.markdown-inline-code {
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.85em;
+  color: var(--primary-color);
+}
+
+.markdown-code-block {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin: var(--spacing-sm) 0;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.markdown-code-block code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-primary);
+}
+
+/* Headings */
+.markdown-heading {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+  line-height: 1.3;
+}
+
+.markdown-h1 {
+  font-size: 1.5em;
+  border-bottom: 2px solid var(--border-secondary);
+  padding-bottom: var(--spacing-xs);
+}
+
+.markdown-h2 {
+  font-size: 1.3em;
+  border-bottom: 1px solid var(--border-tertiary);
+  padding-bottom: var(--spacing-xs);
+}
+
+.markdown-h3 {
+  font-size: 1.2em;
+}
+
+.markdown-h4 {
+  font-size: 1.1em;
+}
+
+.markdown-h5,
+.markdown-h6 {
+  font-size: 1em;
+}
+
+/* Lists */
+.markdown-list {
+  margin: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
+}
+
+.markdown-ordered-list {
+  list-style-type: decimal;
+}
+
+.markdown-list ul,
+.markdown-list ol {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-list-item {
+  margin: var(--spacing-xs) 0;
+  line-height: 1.6;
+}
+
+/* Links */
+.markdown-link {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-decoration-color: rgba(102, 126, 234, 0.4);
+  transition: all 0.2s ease;
+}
+
+.markdown-link:hover {
+  color: var(--primary-color-light);
+  text-decoration-color: var(--primary-color-light);
+}
+
+/* Blockquotes */
+.markdown-blockquote {
+  border-left: 4px solid var(--primary-color);
+  background: var(--surface-secondary);
+  margin: var(--spacing-sm) 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.markdown-blockquote p {
+  margin: 0;
+}
+
+/* Tables */
+.markdown-table {
+  border-collapse: collapse;
+  margin: var(--spacing-md) 0;
+  width: 100%;
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.markdown-table-header {
+  background: var(--surface-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-secondary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-align: left;
+}
+
+.markdown-table-cell {
+  border-bottom: 1px solid var(--border-tertiary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--text-secondary);
+}
+
+.markdown-table-row:hover {
+  background: var(--surface-tertiary);
+}
+
+.markdown-table-row:last-child .markdown-table-cell {
+  border-bottom: none;
+}
+
+/* Horizontal rule */
+.markdown-content hr {
+  border: none;
+  height: 1px;
+  background: var(--border-secondary);
+  margin: var(--spacing-lg) 0;
+}
+
+/* Task lists */
+.markdown-content input[type="checkbox"] {
+  margin-right: var(--spacing-xs);
+  accent-color: var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .markdown-code-block {
+    font-size: 0.8em;
+    padding: var(--spacing-sm);
+  }
+  
+  .markdown-table {
+    font-size: 0.9em;
+  }
+  
+  .markdown-table-cell,
+  .markdown-table-header {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .markdown-h1 {
+    font-size: 1.3em;
+  }
+  
+  .markdown-h2 {
+    font-size: 1.2em;
+  }
+}

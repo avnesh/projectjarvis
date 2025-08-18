@@ -1,0 +1,165 @@
+{
+  "tech_stack": [
+    "JavaScript",
+    "Node.js",
+    "React",
+    "Express.js",
+    "MongoDB",
+    "Vite",
+    "JWT",
+    "bcryptjs",
+    "axios",
+    "mongoose",
+    "React Router",
+    "CORS",
+    "Helmet",
+    "Morgan",
+    "Nodemailer",
+    "Google Generative AI",
+    "Groq API",
+    "Tavily API"
+  ],
+  "features": [
+    {
+      "name": "User Authentication",
+      "description": "Complete user authentication system with registration, login, password reset, and JWT token management",
+      "files": [
+        "server/routes/auth.js",
+        "server/middleware/auth.js",
+        "server/models/User.js",
+        "server/utils/emailService.js",
+        "client/src/services/authService.js",
+        "client/src/context/AuthContext.jsx",
+        "client/src/pages/LoginPage.jsx",
+        "client/src/pages/RegisterPage.jsx",
+        "client/src/pages/ForgotPasswordPage.jsx",
+        "client/src/pages/ResetPasswordPage.jsx"
+      ]
+    },
+    {
+      "name": "AI Chat Interface",
+      "description": "Multi-AI chat interface supporting Groq, Gemini, and Tavily search with conversation history",
+      "files": [
+        "client/src/components/Chat/ChatInterface.jsx",
+        "client/src/components/Chat/NewChatModal.jsx",
+        "client/src/context/ChatContext.jsx",
+        "client/src/services/chatService.js",
+        "client/src/pages/ChatPage.jsx",
+        "server/routes/ai.js",
+        "server/server.js"
+      ]
+    },
+    {
+      "name": "Chat History Management",
+      "description": "Persistent chat storage and history management with MongoDB",
+      "files": [
+        "server/models/Chat.js",
+        "server/server.js"
+      ]
+    },
+    {
+      "name": "Admin Dashboard",
+      "description": "Administrative interface for monitoring system status and user management",
+      "files": [
+        "client/src/components/Admin/AdminDashboard.jsx",
+        "client/src/styles/admin.css"
+      ]
+    },
+    {
+      "name": "Layout Components",
+      "description": "Main layout components including header, sidebar navigation",
+      "files": [
+        "client/src/components/Layout/Header.jsx",
+        "client/src/components/Layout/Header.css",
+        "client/src/components/Layout/Sidebar.jsx",
+        "client/src/components/Layout/Sidebar.css"
+      ]
+    },
+    {
+      "name": "Common Components",
+      "description": "Reusable UI components like loading spinner and keyboard shortcuts",
+      "files": [
+        "client/src/components/Common/LoadingSpinner.jsx",
+        "client/src/components/Common/KeyboardShortcuts.jsx"
+      ]
+    },
+    {
+      "name": "Protected Routes",
+      "description": "Route protection component for authenticated user access",
+      "files": [
+        "client/src/components/ProtectedRoute.jsx"
+      ]
+    },
+    {
+      "name": "User Profile Management",
+      "description": "User profile and settings management interface",
+      "files": [
+        "client/src/pages/ProfilePage.jsx",
+        "client/src/pages/SettingsPage.jsx"
+      ]
+    },
+    {
+      "name": "Database Configuration",
+      "description": "MongoDB database connection and configuration",
+      "files": [
+        "server/config/db.js"
+      ]
+    },
+    {
+      "name": "Security Middleware",
+      "description": "Security middleware including rate limiting, validation, and XSS protection",
+      "files": [
+        "server/middleware/rateLimit.js",
+        "server/middleware/validation.js"
+      ]
+    },
+    {
+      "name": "API Services",
+      "description": "Frontend API service layer for backend communication",
+      "files": [
+        "client/src/services/api.js"
+      ]
+    },
+    {
+      "name": "Multi-AI Integration",
+      "description": "Integration with multiple AI providers (Groq, Gemini, Tavily) with quota management",
+      "files": [
+        "server/server.js"
+      ]
+    },
+    {
+      "name": "Email Service",
+      "description": "Email service for password reset and notifications",
+      "files": [
+        "server/utils/emailService.js"
+      ]
+    },
+    {
+      "name": "Logging System",
+      "description": "Application logging and monitoring utilities",
+      "files": [
+        "server/utils/logger.js"
+      ]
+    },
+    {
+      "name": "Validation Utilities",
+      "description": "Server-side validation utilities for data integrity",
+      "files": [
+        "server/utils/validation.js"
+      ]
+    },
+    {
+      "name": "Styling System",
+      "description": "CSS styling system with component-specific and global styles",
+      "files": [
+        "client/src/styles/App.css",
+        "client/src/styles/auth.css",
+        "client/src/styles/chat.css",
+        "client/src/styles/globals.css",
+        "client/src/pages/AuthPage.css",
+        "client/src/pages/ChatPage.css",
+        "client/style.css"
+      ]
+    }
+  ]
+}
