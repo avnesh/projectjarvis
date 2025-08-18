@@ -514,3 +514,5 @@ For issues and questions:
 **Built with ❤️ for intelligent AI conversations**
 
 *Version 1.0.0 | Last Updated: 2025*
+
+**🚀 Now deployed on Railway: https://projectjarvis.up.railway.app/**
