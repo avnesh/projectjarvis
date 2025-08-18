@@ -4,13 +4,20 @@ import rateLimit from 'express-rate-limit';
 // General API rate limiter
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: process.env.NODE_ENV === 'production' ? 200 : 100, // Higher limit for production
   message: {
-    error: 'Too many requests from this IP, please try again later.',
+    error: 'Rate limit exceeded. Please wait a moment before trying again.',
     retryAfter: '15 minutes'
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip rate limiting for health checks
+  skip: (req) => {
+    return req.path === '/health' || 
+           req.path === '/api/health' ||
+           req.path === '/' ||
+           req.method === 'OPTIONS';
+  }
 });
 
 // Stricter limiter for authentication endpoints
@@ -34,7 +41,7 @@ export const authLimiter = rateLimit({
 // Chat endpoint limiter
 export const chatLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 30, // Limit each IP to 30 requests per windowMs
+  max: process.env.NODE_ENV === 'production' ? 60 : 30, // Higher limit for production
   message: {
     error: 'Too many chat requests, please slow down.',
     retryAfter: '1 minute'
