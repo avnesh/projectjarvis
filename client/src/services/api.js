@@ -1,7 +1,15 @@
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+// Debug logging for production
+if (import.meta.env.PROD) {
+  console.log('🔧 API URL in production:', apiUrl);
+  console.log('🔧 All environment variables:', import.meta.env);
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: apiUrl,
   headers: {
     'Content-Type': 'application/json',
   },

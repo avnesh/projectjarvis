@@ -55,9 +55,9 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
         
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/chat" replace />} />
-        <Route path="*" element={<Navigate to="/chat" replace />} />
+        {/* Default redirect - send to login instead of chat for easier debugging */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>
   );
