@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "npm run dev --prefix client",
-    "build": "npm run build --prefix client",
-    "start": "npm start --prefix server",
-    "install-all": "npm install && cd client && npm install && cd ../server && npm install"
+    "build": "cd client && npm install && npm run build && cd ../server && npm install",
+    "start": "cd server && npm start",
+    "postinstall": "cd client && npm install && cd ../server && npm install"
   },
   "engines": {
     "node": ">=16.0.0"

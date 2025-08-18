@@ -71,6 +71,18 @@ app.use(morgan('combined'));
 app.use(sanitizeInput);
 app.use(xssProtection);
 
+// Serve static files in production
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, '../client/dist');
+  app.use(express.static(clientBuildPath));
+}
+
 // MongoDB imports
 import connectDB from './config/db.js';
 import Chat from './models/Chat.js';
@@ -1130,6 +1142,14 @@ app.post('/api/reset', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to reset conversation' });
   }
 });
+
+// Serve React app for all non-API routes in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    const clientBuildPath = path.join(__dirname, '../client/dist');
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
 
 // Centralized error handling middleware
 app.use(errorHandler);
