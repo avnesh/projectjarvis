@@ -79,7 +79,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV === 'production') {
-  const clientBuildPath = path.join(__dirname, '../client/dist');
+  const clientBuildPath = path.join(__dirname, 'public');
+  console.log('🚀 Serving static files from:', clientBuildPath);
   app.use(express.static(clientBuildPath));
 }
 
@@ -1146,7 +1147,7 @@ app.post('/api/reset', authenticateToken, async (req, res) => {
 // Serve React app for all non-API routes in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    const clientBuildPath = path.join(__dirname, '../client/dist');
+    const clientBuildPath = path.join(__dirname, 'public');
     res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 }
