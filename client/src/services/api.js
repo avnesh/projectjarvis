@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const apiUrl = import.meta.env.VITE_API_URL || 
+  (import.meta.env.PROD ? `${window.location.protocol}//${window.location.host}` : 'http://localhost:5000');
 
 // Debug logging for production
 if (import.meta.env.PROD) {

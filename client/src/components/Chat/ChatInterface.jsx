@@ -859,9 +859,8 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
         ) : (
           <>
             {messages.map((message, index) => (
-              <>
+              <React.Fragment key={message.id}>
                 <div
-                  key={message.id}
                   className={`message-container ${message.role}`}
                   style={{
                     display: 'flex',
@@ -1111,7 +1110,7 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
                 </div>
               </div>
                 </div>
-              </>
+              </React.Fragment>
             ))}
             
             {/* Streaming Message */}
