@@ -215,35 +215,58 @@ export const sendMessageStream = async (prompt, sessionId = null, onChunk, onMod
       throw new Error('Failed to start streaming');
     }
 
-    // Since server sends JSON response, not streaming
-    const data = await response.json();
+    // Handle streaming text response
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullMessage = '';
+    let sessionId = null;
+    let model = null;
     
-    if (data.success) {
-      // Trigger model callback
-      if (onModel) onModel({ model: data.model });
-      
-      // Simulate streaming by sending message character by character
-      const message = data.message;
-      let accumulatedText = '';
-      
-      for (let i = 0; i < message.length; i++) {
-        accumulatedText += message[i];
-        if (onChunk) {
-          onChunk(message[i], i === message.length - 1);
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+        
+        // Process the chunk for any metadata
+        if (chunk.includes('[MODEL:')) {
+          const modelMatch = chunk.match(/\[MODEL:(.*?)\]/);
+          if (modelMatch && onModel) {
+            model = modelMatch[1];
+            onModel({ model });
+          }
         }
-        // Small delay for typing effect
-        await new Promise(resolve => setTimeout(resolve, 20));
+        
+        if (chunk.includes('[SESSION:')) {
+          const sessionMatch = chunk.match(/\[SESSION:(.*?)\]/);
+          if (sessionMatch) {
+            sessionId = sessionMatch[1];
+          }
+        }
+        
+        // Filter out metadata from the actual message content
+        const cleanChunk = chunk.replace(/\[MODEL:.*?\]|\[SESSION:.*?\]|\[SWITCHED_FROM:.*?\]/g, '');
+        
+        if (cleanChunk && onChunk) {
+          onChunk(cleanChunk, false);
+          fullMessage += cleanChunk;
+        }
       }
       
       // Trigger completion
       if (onComplete) {
         onComplete({ 
-          sessionId: data.sessionId,
-          response: message 
+          sessionId: sessionId,
+          response: fullMessage.trim() 
         });
       }
-    } else {
-      throw new Error(data.error || 'Failed to get response');
+      
+    } finally {
+      reader.releaseLock();
     }
   } catch (error) {
     // Don't treat abort as an error
