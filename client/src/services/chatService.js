@@ -4,7 +4,7 @@ import api from './api';
 let lastRequestTime = 0;
 let pendingRequests = new Map();
 
-const RATE_LIMIT_DELAY = 1000; // 1 second between requests
+const RATE_LIMIT_DELAY = 100; // 100ms between requests
 const REQUEST_TIMEOUT = 30000; // 30 seconds timeout
 
 const rateLimit = () => {
@@ -46,10 +46,6 @@ export const getChatHistory = async (limit = 10) => {
 };
 
 export const getChat = async (sessionId) => {
-  if (!rateLimit()) {
-    throw new Error('Rate limit exceeded. Please wait a moment before trying again.');
-  }
-  
   const key = createRequestKey('GET', `/api/chat/${sessionId}`);
   
   return deduplicateRequest(key, async () => {
@@ -153,10 +149,6 @@ export const getArchivedChats = async (limit = 10) => {
 };
 
 export const getChats = async () => {
-  if (!rateLimit()) {
-    throw new Error('Rate limit exceeded. Please wait a moment before trying again.');
-  }
-  
   const key = createRequestKey('GET', '/api/chat/history');
   
   return deduplicateRequest(key, async () => {
