@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run dev --prefix client",
-    "build": "cd client && npm install && npm run build && cd ../server && npm install",
+    "build": "cd client && npm install && npm run build && cp -r dist/* ../public/",
     "start": "cd server && npm start",
     "postinstall": "cd client && npm install && cd ../server && npm install"
   },
