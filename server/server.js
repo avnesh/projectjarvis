@@ -870,28 +870,51 @@ app.post('/api/stream', authenticateToken, chatLimiter, async (req, res) => {
     
     console.log(`📝 Processing streaming prompt for user ${req.user.username} in session ${finalSessionId}: "${prompt.slice(0, 50)}..."`);
     
-    // Get the AI response first
-    const result = await getAIResponse(prompt.trim(), finalSessionId, userId);
-    
-    // Send the complete response immediately (simpler approach)
-    res.json({
-      success: true,
-      message: result.response,
-      sessionId: finalSessionId,
-      model: result.model,
-      modelInfo: {
-        name: result.model,
-        switched: result.switched || false,
-        switchedFrom: result.switchedFrom || null
-      }
+    // Set up Server-Sent Events headers
+    res.writeHead(200, {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': req.headers.origin || '*',
+      'Access-Control-Allow-Credentials': 'true'
     });
+    
+    try {
+      // Get the AI response
+      const result = await getAIResponse(prompt.trim(), finalSessionId, userId);
+      
+      // Send the response as streaming chunks (simulate typing effect)
+      const message = result.response;
+      const chunkSize = 3; // Characters per chunk
+      
+      for (let i = 0; i < message.length; i += chunkSize) {
+        const chunk = message.slice(i, i + chunkSize);
+        res.write(chunk);
+        // Small delay to simulate real-time typing
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      
+      // Send final metadata
+      res.write(`\n\n[MODEL:${result.model}]`);
+      res.write(`[SESSION:${finalSessionId}]`);
+      if (result.switched) {
+        res.write(`[SWITCHED_FROM:${result.switchedFrom}]`);
+      }
+      
+    } catch (error) {
+      res.write(`\n\nError: ${error.message}`);
+    }
+    
+    res.end();
     
   } catch (error) {
     console.error("💥 Streaming API error:", error.message);
-    res.status(500).json({ 
-      success: false,
-      error: error.message 
-    });
+    if (!res.headersSent) {
+      res.status(500).json({ 
+        success: false,
+        error: error.message 
+      });
+    }
   }
 });
 
