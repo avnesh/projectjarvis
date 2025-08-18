@@ -19,10 +19,10 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const from = location.state?.from?.pathname || '/chat';
-      navigate(from, { replace: true });
+      // Always navigate to clean /chat route for fresh chat experience
+      navigate('/chat', { replace: true });
     }
-  }, [isAuthenticated, navigate, location.state?.from?.pathname]);
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     return () => clearError();
@@ -102,8 +102,8 @@ const LoginPage = () => {
     try {
       await login(formData.email.trim(), formData.password);
       
-      const from = location.state?.from?.pathname || '/chat';
-      navigate(from, { replace: true });
+      // Always navigate to clean /chat route for fresh chat experience
+      navigate('/chat', { replace: true });
     } catch (error) {
       setFormErrors({ submit: error.message });
     } finally {

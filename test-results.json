@@ -1,0 +1,81 @@
+{
+  "passed": 12,
+  "failed": 3,
+  "tests": [
+    {
+      "name": "Server Health Check",
+      "passed": false,
+      "details": "Server not responding or unhealthy"
+    },
+    {
+      "name": "API Root Endpoint",
+      "passed": true,
+      "details": "Message: Multi-AI Platform - Groq + Gemini + Tavily with Registration Tracking"
+    },
+    {
+      "name": "User Registration",
+      "passed": true,
+      "details": "User: testuser"
+    },
+    {
+      "name": "User Login",
+      "passed": true,
+      "details": "User: testuser"
+    },
+    {
+      "name": "Token Verification",
+      "passed": true,
+      "details": "Verified user: testuser"
+    },
+    {
+      "name": "Chat History",
+      "passed": true,
+      "details": "Found 0 chats"
+    },
+    {
+      "name": "Send Chat Message",
+      "passed": true,
+      "details": "Response: Hello. It's nice to meet you. Your test message ha..."
+    },
+    {
+      "name": "Get Specific Chat",
+      "passed": true,
+      "details": "Found 2 messages"
+    },
+    {
+      "name": "Create New Chat",
+      "passed": true,
+      "details": "Session ID: 68a357ceb796b9780af20eb1-1755535312229-zzvvp3s39"
+    },
+    {
+      "name": "Admin Endpoint Protection",
+      "passed": true,
+      "details": "Correctly denied access to non-admin user"
+    },
+    {
+      "name": "Invalid Endpoint Handling",
+      "passed": false,
+      "details": "Invalid endpoint not handled correctly"
+    },
+    {
+      "name": "Rate Limiting",
+      "passed": false,
+      "details": "Rate limiting may not be working"
+    },
+    {
+      "name": "Database Connection",
+      "passed": true,
+      "details": "Database is working (duplicate user correctly rejected)"
+    },
+    {
+      "name": "Environment Variables",
+      "passed": true,
+      "details": "Environment: development"
+    },
+    {
+      "name": "CORS Configuration",
+      "passed": true,
+      "details": "CORS headers present"
+    }
+  ]
+}

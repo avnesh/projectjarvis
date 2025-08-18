@@ -27,7 +27,12 @@ const Sidebar = ({ isCollapsed }) => {
       setTimeout(() => fetchChats(), 500);
     };
     
+    const handleTitleUpdated = () => {
+      fetchChats(); // Refresh immediately when title is updated
+    };
+    
     window.addEventListener('chat-sent', handleChatSent);
+    window.addEventListener('chat-title-updated', handleTitleUpdated);
     
     // Real connection status monitoring
     const checkConnection = async () => {
@@ -65,6 +70,7 @@ const Sidebar = ({ isCollapsed }) => {
     return () => {
       clearInterval(connectionInterval);
       window.removeEventListener('chat-sent', handleChatSent);
+      window.removeEventListener('chat-title-updated', handleTitleUpdated);
     };
   }, []); // Empty dependency array to run only once
 
@@ -240,26 +246,10 @@ const Sidebar = ({ isCollapsed }) => {
         {/* New Chat Section */}
         <div className="new-chat-section">
           <button
-            onClick={async () => {
-              try {
-                setLoading(true);
-                const response = await chatService.createNewChat();
-                
-                if (response.success) {
-                  // Don't navigate immediately - let the user start typing
-                  // Navigate only when they actually send a message
-                  navigate(`/chat/${response.sessionId}`);
-                  // Keep the chat list intact - don't refresh unnecessarily
-                } else {
-                  console.error('Failed to create new chat:', response.error);
-                  alert('Failed to create new chat. Please try again.');
-                }
-              } catch (error) {
-                console.error('Error creating new chat:', error);
-                alert('Failed to create new chat. Please try again.');
-              } finally {
-                setLoading(false);
-              }
+            onClick={() => {
+              // Simply navigate to the clean chat page without creating a session
+              // Session will be created when user sends their first message
+              navigate('/chat');
             }}
             className="new-chat-button"
             disabled={loading}

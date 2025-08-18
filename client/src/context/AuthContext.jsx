@@ -26,6 +26,8 @@ export const AuthProvider = ({ children }) => {
     if (token && userData) {
       try {
         const parsedUser = JSON.parse(userData);
+        // Clear any stored sessionId to ensure fresh chat on app reload
+        localStorage.removeItem('currentSessionId');
         setUser(parsedUser);
         setIsAuthenticated(true);
         
@@ -80,6 +82,8 @@ export const AuthProvider = ({ children }) => {
       if (data.success && data.user && data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        // Clear any stored sessionId to ensure fresh chat on login
+        localStorage.removeItem('currentSessionId');
         setUser(data.user);
         setIsAuthenticated(true);
         console.log('✅ Login successful');
@@ -128,6 +132,10 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     clearAuthData();
     setError(null);
+    // Clear any stored sessionId to ensure fresh chat on next login
+    localStorage.removeItem('currentSessionId');
+    // Force navigation to clean /chat route
+    window.location.href = '/chat';
   };
 
   const forgotPassword = async (email) => {
@@ -174,6 +182,12 @@ export const AuthProvider = ({ children }) => {
         // Update local storage and state
         localStorage.setItem('user', JSON.stringify(data.user));
         setUser(data.user);
+        
+        // Update token if provided (for updated username in JWT)
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        
         return data;
       } else {
         throw new Error('Invalid response from server');

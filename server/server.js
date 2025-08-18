@@ -1076,6 +1076,7 @@ app.get('/api/chat/:sessionId', authenticateToken, async (req, res) => {
       success: true,
       messages: chat.messages || [],
       sessionId: chat.sessionId,
+      title: chat.title || 'New Chat',
       updatedAt: chat.updatedAt
     });
   } catch (error) {
@@ -1107,6 +1108,47 @@ app.post('/api/chat/new', authenticateToken, async (req, res) => {
     res.status(500).json({ 
       success: false, 
       error: 'Failed to create new chat session' 
+    });
+  }
+});
+
+// Update chat title endpoint
+app.put('/api/chat/:sessionId/title', authenticateToken, async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { title } = req.body;
+    const userId = req.user._id;
+    
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Valid title is required' 
+      });
+    }
+    
+    const chat = await Chat.findOneAndUpdate(
+      { sessionId, userId, isActive: true },
+      { title: title.trim() },
+      { new: true }
+    );
+    
+    if (!chat) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Chat not found' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      title: chat.title,
+      message: 'Chat title updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating chat title:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to update chat title' 
     });
   }
 });

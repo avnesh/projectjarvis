@@ -15,19 +15,13 @@ const ProfilePage = () => {
   
   // Form state
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: ''
+    username: ''
   });
 
   useEffect(() => {
     if (user) {
-      // Parse username to get first and last name
-      const nameParts = user.username ? user.username.split(' ') : ['', ''];
       setFormData({
-        firstName: nameParts[0] || '',
-        lastName: nameParts.slice(1).join(' ') || '',
-        email: user.email || ''
+        username: user.username || ''
       });
     }
   }, [user]);
@@ -46,17 +40,13 @@ const ProfilePage = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      // Combine first and last name for username
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-      
-      if (!fullName) {
-        throw new Error('First name and last name are required');
+      if (!formData.username || !formData.username.trim()) {
+        throw new Error('Username is required');
       }
 
-      // Call update profile function (you'll need to implement this in AuthContext)
+      // Call update profile function
       await updateProfile({
-        username: fullName,
-        email: formData.email
+        username: formData.username.trim()
       });
 
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -92,7 +82,7 @@ const ProfilePage = () => {
         <Sidebar isCollapsed={isSidebarCollapsed} />
         
         <div className={`page-content ${!isSidebarCollapsed ? 'sidebar-open' : ''}`}>
-          <div className="profile-content">
+          <div className="profile-content" style={{ padding: '2rem', maxWidth: '100%' }}>
             {/* Header */}
             <div className="mb-8">
               <div className="flex items-center justify-between">
@@ -159,42 +149,7 @@ const ProfilePage = () => {
                     </div>
                   )}
 
-                  {/* Name Fields */}
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                        placeholder="Enter your first name"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                        placeholder="Enter your last name"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email Field */}
+                  {/* Email Field (Read-only) */}
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email Address
@@ -203,14 +158,50 @@ const ProfilePage = () => {
                       type="email"
                       id="email"
                       name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 bg-gray-50 dark:bg-gray-600"
-                      placeholder="Enter your email address"
+                      value={user?.email || ''}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-50 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                       readOnly
                     />
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                       Email address cannot be changed. Contact support if you need to update it.
+                    </p>
+                  </div>
+
+                  {/* Current Username (Read-only for reference) */}
+                  <div>
+                    <label htmlFor="currentUsername" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Current Username
+                    </label>
+                    <input
+                      type="text"
+                      id="currentUsername"
+                      name="currentUsername"
+                      value={user?.username || ''}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-50 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                      readOnly
+                    />
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      Your current username for reference.
+                    </p>
+                  </div>
+
+                  {/* Username Field (Editable) */}
+                  <div>
+                    <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      New Username
+                    </label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                      placeholder="Enter your new username"
+                      required
+                    />
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      This will be your new display name across the application.
                     </p>
                   </div>
 

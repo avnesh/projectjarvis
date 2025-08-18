@@ -36,6 +36,7 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
   const editTextareaRef = useRef(null);
   const searchInputRef = useRef(null);
   const fileInputRef = useRef(null);
+  const abortControllerRef = useRef(null); // For cancelling requests
   const activeSessionId = sessionId || urlSessionId;
   
   // Initialize messages from currentChat if available
@@ -104,6 +105,7 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
       setMessages([]);
       setError(null);
       setIsLoading(false); // Reset loading state
+      setChatTitle('New Chat'); // Reset title for new chat
       fetchMessages();
     } else {
       // No active session - show welcome screen
@@ -112,6 +114,8 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
       setIsLoading(false);
       setStreamingMessage('');
       setIsStreaming(false);
+      setChatTitle('New Chat'); // Reset title for welcome screen
+      setHasUnsavedChat(false);
     }
   }, [activeSessionId]);
 
@@ -128,7 +132,9 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
       if (response && (response.success !== false)) {
         // Handle both direct response and wrapped success responses
         const messages = response.messages || response.data?.messages || [];
+        const chatTitle = response.title || response.data?.title || 'New Chat';
         setMessages(messages);
+        setChatTitle(chatTitle); // Set the chat-specific title
         setError(null); // Clear any previous errors on success
       } else {
         console.error('Failed to fetch messages:', response);
@@ -211,6 +217,9 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
     }
 
     try {
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController();
+      
       let accumulatedMessage = '';
       let finalSessionId = activeSessionId;
       
@@ -268,7 +277,9 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
           setStreamingMessageId(null);
           // Remove the user message if there was an error
           setMessages(prev => prev.slice(0, -1));
-        }
+        },
+        // Pass abort signal
+        abortControllerRef.current.signal
       );
       
     } catch (error) {
@@ -296,6 +307,32 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
       }, 1000);
     }
   }, [inputValue, isLoading, isStreaming, activeSessionId, onMessageSent, navigate]);
+
+  const handleStopStreaming = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    
+    // Stop the streaming state
+    setIsStreaming(false);
+    
+    // If there's accumulated message, save it as complete
+    if (streamingMessage) {
+      const botMessage = {
+        id: streamingMessageId,
+        content: streamingMessage + ' [Response stopped by user]',
+        role: 'assistant',
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, botMessage]);
+      setStreamingMessage('');
+      setStreamingMessageId(null);
+    }
+    
+    setIsLoading(false);
+  }, [streamingMessage, streamingMessageId]);
 
   const handleEditMessage = (messageId, currentContent) => {
     setEditingMessageId(messageId);
@@ -452,6 +489,8 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
                     try {
                       await chatService.updateChatTitle(activeSessionId, chatTitle);
                       setIsEditingTitle(false);
+                      // Trigger sidebar refresh
+                      window.dispatchEvent(new CustomEvent('chat-title-updated'));
                     } catch (error) {
                       console.error('Failed to update title:', error);
                     }
@@ -469,6 +508,8 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
                   try {
                     await chatService.updateChatTitle(activeSessionId, chatTitle);
                     setIsEditingTitle(false);
+                    // Trigger sidebar refresh
+                    window.dispatchEvent(new CustomEvent('chat-title-updated'));
                   } catch (error) {
                     console.error('Failed to update title:', error);
                   }
@@ -1409,10 +1450,11 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
             )}
             
             <button 
-              type="submit" 
-              disabled={isLoading || isStreaming || (!inputValue.trim() && !selectedFile)}
+              type={isStreaming ? "button" : "submit"}
+              onClick={isStreaming ? handleStopStreaming : undefined}
+              disabled={isLoading || (!isStreaming && !inputValue.trim() && !selectedFile)}
               style={{
-                background: 'var(--primary-gradient)',
+                background: isStreaming ? 'var(--status-error)' : 'var(--primary-gradient)',
                 border: 'none',
                 borderRadius: 'var(--radius-md)',
                 padding: 'var(--spacing-md)',
@@ -1425,36 +1467,41 @@ const ChatInterface = ({ currentChat, onMessageSent, sessionId, isSidebarOpen })
                 width: '48px',
                 height: '48px',
                 flexShrink: 0,
-                opacity: isLoading || (!inputValue.trim() && !selectedFile) ? 0.6 : 1,
-                boxShadow: '0 4px 16px var(--shadow-primary)',
+                opacity: isLoading || (!isStreaming && !inputValue.trim() && !selectedFile) ? 0.6 : 1,
+                boxShadow: isStreaming ? '0 4px 16px rgba(239, 68, 68, 0.5)' : '0 4px 16px var(--shadow-primary)',
                 fontWeight: '600'
               }}
               onMouseEnter={(e) => {
-                if (!isLoading && (inputValue.trim() || selectedFile)) {
-                  e.target.style.background = 'var(--primary-gradient-hover)';
+                if (!isLoading && (isStreaming || inputValue.trim() || selectedFile)) {
+                  e.target.style.background = isStreaming ? 'rgba(239, 68, 68, 0.9)' : 'var(--primary-gradient-hover)';
                   e.target.style.transform = 'scale(1.05) translateY(-1px)';
-                  e.target.style.boxShadow = '0 6px 20px var(--shadow-primary)';
+                  e.target.style.boxShadow = isStreaming ? '0 6px 20px rgba(239, 68, 68, 0.6)' : '0 6px 20px var(--shadow-primary)';
                 }
               }}
               onMouseLeave={(e) => {
-                e.target.style.background = 'var(--primary-gradient)';
+                e.target.style.background = isStreaming ? 'var(--status-error)' : 'var(--primary-gradient)';
                 e.target.style.transform = 'scale(1) translateY(0)';
-                e.target.style.boxShadow = '0 4px 16px var(--shadow-primary)';
+                e.target.style.boxShadow = isStreaming ? '0 4px 16px rgba(239, 68, 68, 0.5)' : '0 4px 16px var(--shadow-primary)';
               }}
               onMouseDown={(e) => {
-                if (!isLoading && (inputValue.trim() || selectedFile)) {
+                if (!isLoading && (isStreaming || inputValue.trim() || selectedFile)) {
                   e.target.style.transform = 'scale(0.95) translateY(0)';
                 }
               }}
               onMouseUp={(e) => {
-                if (!isLoading && (inputValue.trim() || selectedFile)) {
+                if (!isLoading && (isStreaming || inputValue.trim() || selectedFile)) {
                   e.target.style.transform = 'scale(1.05) translateY(-1px)';
                 }
               }}
-              aria-label="Send message"
+              aria-label={isStreaming ? "Stop response" : "Send message"}
+              title={isStreaming ? "Stop response" : "Send message"}
             >
               {isLoading ? (
                 <LoadingSpinner size="small" />
+              ) : isStreaming ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'brightness(0) invert(1)' }}>
+                  <rect x="6" y="6" width="12" height="12"></rect>
+                </svg>
               ) : (
                 <img src="/assets/send.svg" alt="Send" style={{ width: '24px', height: '24px', filter: 'brightness(0) invert(1)' }} />
               )}
