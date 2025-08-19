@@ -193,7 +193,9 @@ export const sendMessage = async (prompt, sessionId = null) => {
 export const sendMessageStream = async (prompt, sessionId = null, onChunk, onModel, onComplete, onError, abortSignal = null) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/stream`, {
+    const apiUrl = import.meta.env.VITE_API_URL || 
+      (import.meta.env.PROD ? `${window.location.protocol}//${window.location.host}` : 'http://localhost:5000');
+    const response = await fetch(`${apiUrl}/api/stream`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
