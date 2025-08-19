@@ -51,10 +51,12 @@ app.use(helmet({
 }));
 
 // CORS configuration
+const corsOrigin = process.env.NODE_ENV === 'production' 
+  ? (process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://projectjarvis.up.railway.app').replace(/\/$/, '') // Remove trailing slash
+  : ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL || 'https://yourdomain.com'
-    : ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: corsOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
