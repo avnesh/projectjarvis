@@ -11,13 +11,17 @@ npm install --prefix client
 echo "🔨 Building client..."
 npm run build --prefix client
 
-# Clean old assets
-echo "🧹 Cleaning old assets..."
-rm -rf server/public/assets
+# Clean old public files completely
+echo "🧹 Cleaning server public directory..."
+rm -rf server/public/*
 
-# Copy build files
+# Copy build files with verbose output
 echo "📋 Copying build files to server..."
-cp -r client/dist/* server/public/
+cp -rv client/dist/* server/public/
+
+# List what was copied
+echo "📂 Files in server/public:"
+ls -la server/public/
 
 # Install server dependencies
 echo "📦 Installing server dependencies..."
