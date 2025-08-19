@@ -195,6 +195,9 @@ export const sendMessageStream = async (prompt, sessionId = null, onChunk, onMod
     const token = localStorage.getItem('token');
     const apiUrl = import.meta.env.VITE_API_URL || 
       (import.meta.env.PROD ? `${window.location.protocol}//${window.location.host}` : 'http://localhost:5000');
+    
+    console.log('💬 Starting chat stream:', { apiUrl, hasToken: !!token, prompt: prompt.substring(0, 50) + '...' });
+    
     const response = await fetch(`${apiUrl}/api/stream`, {
       method: 'POST',
       headers: {
@@ -204,6 +207,8 @@ export const sendMessageStream = async (prompt, sessionId = null, onChunk, onMod
       body: JSON.stringify({ prompt, sessionId }),
       signal: abortSignal // Add abort signal support
     });
+    
+    console.log('📡 Stream response:', response.status, response.ok);
 
     if (!response.ok) {
       throw new Error('Failed to start streaming');
