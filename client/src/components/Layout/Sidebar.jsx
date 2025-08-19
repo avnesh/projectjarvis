@@ -34,36 +34,49 @@ const Sidebar = ({ isCollapsed }) => {
     window.addEventListener('chat-sent', handleChatSent);
     window.addEventListener('chat-title-updated', handleTitleUpdated);
     
-    // Real connection status monitoring
+    // Real connection status monitoring with enhanced debugging
     const checkConnection = async () => {
       try {
-        // API health check
+        // Get API URL with fallback logic
         const apiUrl = import.meta.env.VITE_API_URL || 
           (import.meta.env.PROD ? `${window.location.protocol}//${window.location.host}` : 'http://localhost:5000');
         
-        // Create compatible abort controller for timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        console.log('🔍 Checking connection to:', apiUrl);
+        setConnectionStatus('connecting');
         
-        const response = await fetch(`${apiUrl}/api/health`, { 
-          method: 'GET',
-          signal: controller.signal
-        });
+        // Use simple fetch without AbortController for maximum compatibility
+        const response = await Promise.race([
+          fetch(`${apiUrl}/api/health`, { 
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            cache: 'no-cache'
+          }),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), 8000)
+          )
+        ]);
         
-        clearTimeout(timeoutId);
+        console.log('✅ Response status:', response.status);
         
         if (response.ok) {
           const data = await response.json();
+          console.log('📊 Health data:', data);
+          
           if (data.success && data.status === 'healthy') {
+            console.log('🟢 Connection: ONLINE');
             setConnectionStatus('connected');
           } else {
+            console.log('🔴 Connection: API unhealthy');
             setConnectionStatus('disconnected');
           }
         } else {
+          console.log('🔴 Connection: Bad response', response.status);
           setConnectionStatus('disconnected');
         }
       } catch (error) {
-        console.log('Connection check failed:', error.message);
+        console.log('🔴 Connection check failed:', error.message);
         setConnectionStatus('disconnected');
       }
       setLastUpdate(new Date());
