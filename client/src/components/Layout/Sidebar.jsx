@@ -38,7 +38,9 @@ const Sidebar = ({ isCollapsed }) => {
     const checkConnection = async () => {
       try {
         // API health check
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/health`, { 
+        const apiUrl = import.meta.env.VITE_API_URL || 
+          (import.meta.env.PROD ? `${window.location.protocol}//${window.location.host}` : 'http://localhost:5000');
+        const response = await fetch(`${apiUrl}/api/health`, { 
           method: 'GET',
           signal: AbortSignal.timeout(5000) // 5 second timeout
         });

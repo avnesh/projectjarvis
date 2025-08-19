@@ -26,7 +26,8 @@
       "Bash(vercel:*)",
       "Bash(grep:*)",
       "Bash(npm run build:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "WebFetch(domain:projectjarvis.up.railway.app)"
     ],
     "deny": [],
     "ask": []
