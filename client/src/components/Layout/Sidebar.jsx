@@ -40,10 +40,17 @@ const Sidebar = ({ isCollapsed }) => {
         // API health check
         const apiUrl = import.meta.env.VITE_API_URL || 
           (import.meta.env.PROD ? `${window.location.protocol}//${window.location.host}` : 'http://localhost:5000');
+        
+        // Create compatible abort controller for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
         const response = await fetch(`${apiUrl}/api/health`, { 
           method: 'GET',
-          signal: AbortSignal.timeout(5000) // 5 second timeout
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         if (response.ok) {
           const data = await response.json();
