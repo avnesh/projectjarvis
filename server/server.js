@@ -92,6 +92,7 @@ import User from './models/User.js';
 // Route imports
 import authRoutes from './routes/auth.js';
 import aiRoutes from './routes/ai.js';
+import chatRoutes from './routes/chat.js';
 
 // Middleware imports
 import { authenticateToken, optionalAuth, requireAdmin } from './middleware/auth.js';
@@ -798,6 +799,7 @@ async function getAIResponse(prompt, sessionId = 'default-session', userId) {
 // Apply rate limiting to routes
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/ai', authenticateToken, apiLimiter, aiRoutes);
+app.use('/api/chat', authenticateToken, chatLimiter, chatRoutes);
 
 // Main chat endpoint - CLEAN VERSION
 app.post('/api/chat', authenticateToken, chatLimiter, validateChatMessage, handleValidationErrors, async (req, res) => {
